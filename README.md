@@ -49,7 +49,7 @@ class Db
 }
 ````
 ````php
-namespace App;
+namespace App\Services;
 class UserService
 {
     protected $db;
@@ -66,7 +66,7 @@ class UserService
 RivetIoc will use constructor type hints to automatically create and inject dependencies
 
 ````php
-$userService = \RivetIoc\Ioc::getInstance()->make('App\UserService');
+$userService = \RivetIoc\Ioc::getInstance()->make('App\Services\UserService');
 ````
 
 ### Manual dependency registration
@@ -99,6 +99,7 @@ Use the RivetIoc\Traits\Locator trait in a class give access to commonly used Ri
 * unregister
 
 ````php
+namespace App\Services;
 class UserService
 {
     use \RivetIoc\Traits\Locator;
@@ -107,7 +108,7 @@ class UserService
     
     public function __construct()
     {
-        $this->dao = self::make('Doa\UserDao');
+        $this->dao = self::make('App\Doa\UserDao');
     }
 }
 ````
