@@ -16,7 +16,7 @@ RivetIoc is an auto-wiring (zero configuration) IoC container for PHP to easily 
 ### Install
 
 ````
-composer require crishellco/rivet-ioc
+$ composer require crishellco/rivet-ioc
 ````
 
 ### System Requirements
