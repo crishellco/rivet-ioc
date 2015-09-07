@@ -101,7 +101,6 @@ Use the RivetIoc\Traits\Locator trait in a class give access to commonly used Ri
 ````php
 class UserService
 {
-
     use \RivetIoc\Traits\Locator;
     
     protected $dao;
@@ -110,7 +109,6 @@ class UserService
     {
         $this->dao = self::make('\Doa\UserDao');
     }
-
 }
 ````
 
