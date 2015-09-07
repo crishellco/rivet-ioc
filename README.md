@@ -107,7 +107,7 @@ class UserService
     
     public function __construct()
     {
-        $this->dao = self::make('\Doa\UserDao');
+        $this->dao = self::make('Doa\UserDao');
     }
 }
 ````
