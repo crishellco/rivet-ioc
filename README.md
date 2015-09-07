@@ -1,5 +1,7 @@
 # RivetIoc
 
+[![Build Status](https://travis-ci.org/crishellco/rivet-ioc.svg?branch=master)](https://travis-ci.org/crishellco/rivet-ioc)
+
 RivetIoc is an auto-wiring (zero configuration) IoC container for PHP to easily manage class dependencies. It features both auto-wiring of dependencies using reflection as well as manual registration for depenency injection.
 
 ## Features
