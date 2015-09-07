@@ -98,6 +98,22 @@ Use the RivetIoc\Traits\Locator trait in a class give access to commonly used Ri
 * register
 * unregister
 
+````php
+class UserService
+{
+
+    use \RivetIoc\Traits\Locator;
+    
+    protected $dao;
+    
+    public function __construct()
+    {
+        $this->dao = self::make('\Doa\UserDao');
+    }
+
+}
+````
+
 ## How to Contribute
 
 ### Pull Requests
