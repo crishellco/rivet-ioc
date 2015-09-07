@@ -74,7 +74,7 @@ $userService = \RivetIoc\Ioc::getInstance()->make('App\UserService');
 **Register your dependencies in your application bootstrap**
 
 ````php
-RivetIoc\Ioc::register('App\Db', function() {
+\RivetIoc\Ioc::register('App\Db', function() {
     $mysqli = new mysqli('localhost', 'username', 'password', 'mydb');
     $db = new App\Db($mysqli);
     
