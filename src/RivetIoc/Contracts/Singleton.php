@@ -52,9 +52,9 @@ class Singleton {
      */
     protected static $instances = array();
 
-    final private function __clone() { } 
-    final private function __construct() { } 
-    final private function __wakeup() { }
+    protected function __clone() { }
+    protected function __construct() { }
+    protected function __wakeup() { }
 
     /**
      * Gets class instance
