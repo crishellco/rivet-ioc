@@ -101,7 +101,7 @@ Class Ioc extends Singleton {
     {
         // Get closure to create new object
         $closure = $this->getRegisteredClosure($alias)
-             ?: $this->getGeneratedClosure($alias);
+            ?: $this->getGeneratedClosure($alias);
 
         // Execute callable closure to create new object
         $object = $closure();
@@ -140,26 +140,35 @@ Class Ioc extends Singleton {
     {
         // Get reflection class
         $reflectionClass = new ReflectionClass($alias);
-        
+
         // Get get class constructor
         // getConstructor method returns null if no class constructor exists
         $constructor = $reflectionClass->getConstructor();
-        
+
         // If constructor found, make new object(s) for
         // each parameter to pass as arguments
         $args = $constructor
             ? $this->makeArguments($constructor->getParameters())
             : array();
 
-        // Create new closure
-        $newObject = $reflectionClass->newInstanceArgs($args);
+        // Create new object
+        if($reflectionClass->isSubclassOf('RivetIoc\Contracts\Singleton')) {
+            // TODO allow dependency injection with children of Singleton
+            $newObject = call_user_func(
+                array($reflectionClass->getName(), 'getInstance')
+            );
+        } else {
+            $newObject = $reflectionClass->newInstanceArgs($args);
+        }
+
+        // Create closure that returns newly created object
         $closure = function() use ($newObject) {
             return $newObject;
         };
-        
+
         // Cache
         $this->registry[$alias] = $closure;
-        
+
         return $closure;
     }
 

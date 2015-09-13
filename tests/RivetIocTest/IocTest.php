@@ -52,6 +52,11 @@ class IocTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
+    protected $testClassSingletonAlias = 'RivetIocTest\Classes\TestClassSingleton';
+
+    /**
+     * @var string
+     */
     protected $testClassManualAlias = 'RivetIocTest\Classes\TestClassManual';
 
     /**
@@ -124,6 +129,20 @@ class IocTest extends \PHPUnit_Framework_TestCase
             $object->getDependency()
         );
 
+    }
+
+    /**
+     * Tests locating singleton
+     */
+    public function testSingleton()
+    {
+        $object = self::make($this->testClassSingletonAlias);
+
+        // Test that object was successfully made
+        $this->assertInstanceOf(
+            $this->testClassSingletonAlias,
+            $object
+        );
     }
 
 }
