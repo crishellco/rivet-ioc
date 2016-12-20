@@ -3,7 +3,7 @@
  * rivet-ioc - An auto-wiring IoC container for PHP
  *
  * @author      Christopher Mitchell
- * @copyright   2015 Chris Mitchell
+ * @copyright   2016-2017 Christopher Mitchell
  * @link        https://github.com/crishellco/rivet-ioc
  * @license     https://github.com/crishellco/rivet-ioc/blob/master/LICENSE
  * @version     1.0
@@ -11,7 +11,7 @@
  *
  * MIT LICENSE
  *
- * Copyright (c) 2015 Christopher Mitchell
+ * Copyright (c) 2016-2017 Christopher Mitchell
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -35,9 +35,9 @@
 
 namespace RivetIoc;
 
-use RivetIoc\Contracts\Singleton,
-    \ReflectionClass,
-    \Exception;
+use RivetIoc\Exceptions\RivetIocException;
+use RivetIoc\Contracts\Singleton;
+use \ReflectionClass;
 
 /**
  * Ioc class
@@ -45,55 +45,56 @@ use RivetIoc\Contracts\Singleton,
  * A manually and recursively auto-wiring
  * IoC container for PHP.
  *
- * @package     rivet-ioc
- * @author      Christopher Mitchell
+ * @package RivetIoc
+ * @author Christopher Mitchell
  */
 Class Ioc extends Singleton {
 
     /**
      * @var array
      */
-    private $registry = [];
+    private $handlers = [];
 
     /**
-     * Registers new dependency
+     * Registers new dependency.
+     *
      * This allows us to manually define how to create a new resource,
      * for instance if we want a singleton rather than a new instance.
+     *
      * @param string $alias
      * @param callable $closure
      * @return \RivetIoc\Ioc
-     * @throws Exception
+     * @throws \RivetIoc\Exceptions\RivetIocException
      */
     public function register($alias, callable $closure)
     {
         // Validate that dependency hasn't already been registered
         if($this->isRegistered($alias)) {
-            throw new Exception("'$alias' has already been registered in the Ioc registry");
+            throw new RivetIocException("'$alias' has already been registered");
         }
 
-        $this->registry[$alias] = $closure;
+        $this->handlers[$alias] = $closure;
 
         return $this;
     }
 
     /**
-     * Unregisters dependency
+     * Forgets manually registered dependency.
+     *
      * @param string $alias
      * @return \RivetIoc\Ioc
      */
-    public function unregister($alias)
+    public function forget($alias)
     {
-        // Validate that dependency has been registered
-        if($this->isRegistered($alias)) {
-            unset($this->registry[$alias]);
-        }
+        unset($this->handlers[$alias]);
 
         return $this;
     }
 
     /**
-     * Makes new object using a registered creation process
-     * or auto-wiring
+     * Makes new object using a registered creation process.
+     * or auto-wiring.
+     *
      * @param string $alias
      * @return object
      */
@@ -110,29 +111,32 @@ Class Ioc extends Singleton {
     }
 
     /**
-     * Gets if dependency creation process has been registered
+     * Gets if dependency creation process has been registered.
+     *
      * @param string $alias
      * @return bool
      */
     protected function isRegistered($alias)
     {
-        return array_key_exists($alias, $this->registry);
+        return array_key_exists($alias, $this->handlers);
     }
 
     /**
-     * Gets registered closure if exists
+     * Gets registered closure if exists.
+     *
      * @param string $alias
      * @return callable|null
      */
     protected function getRegisteredClosure($alias)
     {
         return $this->isRegistered($alias)
-            ? $this->registry[$alias]
+            ? $this->handlers[$alias]
             : null;
     }
 
     /**
-     * Generates closure using auto-wiring and caches
+     * Generates closure using auto-wiring and caches.
+     *
      * @param string $alias
      * @return callable
      */
@@ -155,7 +159,7 @@ Class Ioc extends Singleton {
         if($reflectionClass->isSubclassOf('RivetIoc\Contracts\Singleton')) {
             // TODO allow dependency injection with children of Singleton
             $newObject = call_user_func(
-                array($reflectionClass->getName(), 'getInstance')
+                array($reflectionClass->getName(), 'instance')
             );
         } else {
             $newObject = $reflectionClass->newInstanceArgs($args);
@@ -167,14 +171,15 @@ Class Ioc extends Singleton {
         };
 
         // Cache
-        $this->registry[$alias] = $closure;
+        $this->handlers[$alias] = $closure;
 
         return $closure;
     }
 
     /**
      * Makes new object (or null if no type
-     * hint) for each method argument
+     * hint) for each method argument.
+     *
      * @param array $reflectionParameters
      * @return array
      */

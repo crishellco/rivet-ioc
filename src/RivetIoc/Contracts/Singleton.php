@@ -3,7 +3,7 @@
  * rivet-ioc - An auto-wiring IoC container for PHP
  *
  * @author      Christopher Mitchell
- * @copyright   2015 Chris Mitchell
+ * @copyright   2016-2017 Christopher Mitchell
  * @link        https://github.com/crishellco/rivet-ioc
  * @license     https://github.com/crishellco/rivet-ioc/blob/master/LICENSE
  * @version     1.0
@@ -11,7 +11,7 @@
  *
  * MIT LICENSE
  *
- * Copyright (c) 2015 Christopher Mitchell
+ * Copyright (c) 2016-2017 Christopher Mitchell
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -38,16 +38,14 @@ namespace RivetIoc\Contracts;
 /**
  * Singleton class
  *
- * This is a single class
- * to be extended
- *
- * @package    rivet-ioc
- * @author     Christopher Mitchell
+ * @package RivetIoc\Contracts
+ * @author Christopher Mitchell
  */
 class Singleton {
     
     /**
-     * Class instance cache
+     * Class instance cache.
+     *
      * @var array
      */
     protected static $instances = array();
@@ -57,15 +55,16 @@ class Singleton {
     protected function __wakeup() { }
 
     /**
-     * Gets class instance
+     * Gets class instance.
+     *
      * @return mixed
      */
-    final public static function getInstance()
+    final public static function instance()
     {
         $calledClass = get_called_class();
         
         if (!isset(static::$instances[$calledClass])) {
-            static::$instances[$calledClass] = new $calledClass();
+            static::$instances[$calledClass] = new $calledClass;
         }
 
         return static::$instances[$calledClass];

@@ -3,7 +3,7 @@
  * rivet-ioc - An auto-wiring IoC container for PHP
  *
  * @author      Christopher Mitchell
- * @copyright   2015 Chris Mitchell
+ * @copyright   2016-2017 Christopher Mitchell
  * @link        https://github.com/crishellco/rivet-ioc
  * @license     https://github.com/crishellco/rivet-ioc/blob/master/LICENSE
  * @version     1.0
@@ -11,7 +11,7 @@
  *
  * MIT LICENSE
  *
- * Copyright (c) 2015 Christopher Mitchell
+ * Copyright (c) 2016-2017 Christopher Mitchell
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -35,9 +35,11 @@
 
 namespace RivetIocTest;
 
-use RivetIoc\Traits\Locator,
-    RivetIocTest\Classes\TestDependency,
-    RivetIocTest\Classes\TestClassManual;
+use RivetIoc\Ioc;
+use RivetIoc\Traits\Locator;
+use RivetIocTest\Classes\TestDependency;
+use RivetIocTest\Classes\TestClassManual;
+use RivetIoc\Exceptions\RivetIocException;
 
 class IocTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,34 +49,43 @@ class IocTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    protected $testClassAlias = 'RivetIocTest\Classes\TestClass';
+    public $testClassAlias = 'RivetIocTest\Classes\TestClass';
 
     /**
      * @var string
      */
-    protected $testClassSingletonAlias = 'RivetIocTest\Classes\TestClassSingleton';
+    public $testClassSingletonAlias = 'RivetIocTest\Classes\TestClassSingleton';
 
     /**
      * @var string
      */
-    protected $testClassManualAlias = 'RivetIocTest\Classes\TestClassManual';
+    public static $testClassManualAlias = 'RivetIocTest\Classes\TestClassManual';
 
     /**
      * @var string
      */
-    protected $testDepedencyAlias = 'RivetIocTest\Classes\TestDependency';
+    public $testDepedencyAlias = 'RivetIocTest\Classes\TestDependency';
 
     /**
-     * Sets up test
+     * @var string
      */
-    protected function setUp()
+    public static $manuallyCreatedMessage = 'I was created in a manually registered closure';
+
+    /**
+     * Sets up test.
+     */
+    public static function setUpBeforeClass()
     {
-        // Manually register dependency
-        self::register(
-            $this->testClassManualAlias,
-            function() {
-                $dependency = new TestDependency();
+        // Manually register handler
+        $message = self::$manuallyCreatedMessage;
+        Ioc::instance()->register(
+            self::$testClassManualAlias,
+            function() use ($message) {
+                $dependency = new TestDependency;
                 $object = new TestClassManual($dependency);
+
+                // Set an object property to test later
+                $object->message = $message;
 
                 return $object;
             }
@@ -82,24 +93,15 @@ class IocTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tears down test
+     * Tests manual registration.
      */
-    protected function tearDown()
+    public function test_can_manually_register()
     {
-        // Unregister manually registered dependency
-        self::unregister($this->testClassManualAlias);
-    }
-
-    /**
-     * Tests manual registration
-     */
-    public function testManualRegistration()
-    {
-        $object = self::make($this->testClassManualAlias);
+        $object = $this->make(self::$testClassManualAlias);
 
         // Test that object was successfully made
         $this->assertInstanceOf(
-            $this->testClassManualAlias,
+            self::$testClassManualAlias,
             $object
         );
 
@@ -108,14 +110,28 @@ class IocTest extends \PHPUnit_Framework_TestCase
             $this->testDepedencyAlias,
             $object->getDependency()
         );
+        $this->assertEquals(
+            self::$manuallyCreatedMessage,
+            $object->message
+        );
+    }
+
+    public function test_can_forget_manually_registered()
+    {
+        // Forgets manually registered handler
+        $this->forget(self::$testClassManualAlias);
+
+        // Creates a new object and validates that it was not made using a closure
+        $object = $this->make(self::$testClassManualAlias);
+        $this->assertNull($object->message);
     }
 
     /**
-     * Tests auto wiring
+     * Tests auto wiring.
      */
-    public function testAutoWiring()
+    public function test_dependency_auto_wiring()
     {
-        $object = self::make($this->testClassAlias);
+        $object = $this->make($this->testClassAlias);
 
         // Test that object was successfully made
         $this->assertInstanceOf(
@@ -132,17 +148,32 @@ class IocTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests locating singleton
+     * Tests locating singleton.
      */
-    public function testSingleton()
+    public function test_can_resolve_singleton()
     {
-        $object = self::make($this->testClassSingletonAlias);
+        $object = $this->make($this->testClassSingletonAlias);
 
         // Test that object was successfully made
         $this->assertInstanceOf(
             $this->testClassSingletonAlias,
             $object
         );
+    }
+
+    /**
+     * Tests registering a previously registered handler.
+     */
+    public function test_cannot_manually_register_again()
+    {
+        try {
+            $this->register(self::$testClassManualAlias, function() {});
+        } catch(RivetIocException $e) {
+            return;
+        }
+
+        $this->fail('Expected RivetIocException not thrown.');
+
     }
 
 }

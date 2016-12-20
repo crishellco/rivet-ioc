@@ -90,13 +90,21 @@ RivetIoc will use the registered closure to create and inject dependencies
 $db = \RivetIoc\Ioc::getInstance()->make('App\Db');
 ````
 
+**Forget a manually registered dependency**
+
+````php
+register_shutdown_function(function() {
+    \RivetIoc\Ioc::getInstance()->forget('App\Db');
+});
+````
+
 ### Locator trait
 
 Use the RivetIoc\Traits\Locator trait in a class give access to commonly used RivetIoc\Ioc methods:
 
 * make
 * register
-* unregister
+* forget
 
 ````php
 namespace App\Services;
@@ -108,7 +116,7 @@ class UserService
     
     public function __construct()
     {
-        $this->dao = self::make('App\Doa\UserDao');
+        $this->dao = $this->make('App\Doa\UserDao');
     }
 }
 ````

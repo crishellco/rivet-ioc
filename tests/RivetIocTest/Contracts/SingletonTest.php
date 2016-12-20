@@ -3,7 +3,7 @@
  * rivet-ioc - An auto-wiring IoC container for PHP
  *
  * @author      Christopher Mitchell
- * @copyright   2015 Chris Mitchell
+ * @copyright   2016-2017 Christopher Mitchell
  * @link        https://github.com/crishellco/rivet-ioc
  * @license     https://github.com/crishellco/rivet-ioc/blob/master/LICENSE
  * @version     1.0
@@ -11,7 +11,7 @@
  *
  * MIT LICENSE
  *
- * Copyright (c) 2015 Christopher Mitchell
+ * Copyright (c) 2016-2017 Christopher Mitchell
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -41,12 +41,12 @@ class SingletonTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * Tests RivetIoc\Contracts\Singleton class
+     * Tests RivetIoc\Contracts\Singleton class.
      */
-    public function testGetInstance()
+    public function test_can_get_instance()
     {
-        $firstInstance = Ioc::getInstance();
-        $secondInstance = Ioc::getInstance();
+        $firstInstance = Ioc::instance();
+        $secondInstance = Ioc::instance();
 
         $this->assertSame($firstInstance, $secondInstance);
     }

@@ -33,27 +33,27 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace RivetIocTest\Traits;
+namespace RivetIoc\Exceptions;
 
-use RivetIocTest\Classes\TestClassWithLocatorTrait;
+use \Exception;
 
-class LocatorTest extends \PHPUnit_Framework_TestCase
+/**
+ * RivetIocException class
+ *
+ * @package RivetIoc\Exceptions
+ * @author Christopher Mitchell
+ */
+class RivetIocException extends Exception
 {
 
     /**
-     * @var string
+     * Constructor.
+     *
+     * @param string $message
      */
-    protected $testClassAlias = 'RivetIocTest\Classes\TestClass';
-
-    /**
-     * Tests RivetIoc\Traits\Locator trait.
-     */
-    public function test_can_use_locator_trait()
+    public function __construct($message)
     {
-        $testClassWithLocatorTrait = new TestClassWithLocatorTrait;
-        $instance = $testClassWithLocatorTrait->make($this->testClassAlias);
-
-        $this->assertInstanceOf($this->testClassAlias, $instance);
+        parent::__construct($message);
     }
 
 }
