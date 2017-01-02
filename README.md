@@ -66,7 +66,7 @@ class UserService
 RivetIoc will use constructor type hints to automatically create and inject dependencies
 
 ````php
-$userService = \RivetIoc\Ioc::getInstance()->make('App\Services\UserService');
+$userService = \RivetIoc\Ioc::instance()->make('App\Services\UserService');
 ````
 
 ### Manual dependency registration
@@ -74,7 +74,7 @@ $userService = \RivetIoc\Ioc::getInstance()->make('App\Services\UserService');
 **Register your dependencies in your application bootstrap**
 
 ````php
-\RivetIoc\Ioc::getInstance()->register('App\Db', function() {
+\RivetIoc\Ioc::instance()->register('App\Db', function() {
     $mysqli = new mysqli('localhost', 'username', 'password', 'mydb');
     $db = new App\Db($mysqli);
     
@@ -87,14 +87,14 @@ $userService = \RivetIoc\Ioc::getInstance()->make('App\Services\UserService');
 RivetIoc will use the registered closure to create and inject dependencies
 
 ````php
-$db = \RivetIoc\Ioc::getInstance()->make('App\Db');
+$db = \RivetIoc\Ioc::instance()->make('App\Db');
 ````
 
 **Forget a manually registered dependency**
 
 ````php
 register_shutdown_function(function() {
-    \RivetIoc\Ioc::getInstance()->forget('App\Db');
+    \RivetIoc\Ioc::instance()->forget('App\Db');
 });
 ````
 
