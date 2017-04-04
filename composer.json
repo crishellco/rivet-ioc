@@ -4,12 +4,10 @@
     "type": "library",
     "license": "MIT",
     "version": "1.1.0",
-    "authors": [
-        {
-            "name": "Christopher Mitchell",
-            "email": "cmitchell@crishell.co"
-        }
-    ],
+    "authors": [{
+        "name": "Christopher Mitchell",
+        "email": "cmitchell@crishell.co"
+    }],
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4.0"
