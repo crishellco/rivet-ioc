@@ -33,27 +33,18 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace RivetIocTest\Traits;
+use RivetIoc\Ioc;
 
-use RivetIocTest\Classes\TestClassWithLocatorTrait;
-
-class LocatorTest extends \PHPUnit_Framework_TestCase
-{
-
+if (!function_exists('rivet_make')) {
     /**
-     * @var string
+     * Makes new object using a registered creation process.
+     * or auto-wiring.
+     *
+     * @param string $alias
+     * @return object
      */
-    protected $testClassAlias = 'RivetIocTest\Classes\TestClass';
-
-    /**
-     * Tests RivetIoc\Traits\Locator trait.
-     */
-    public function test_can_use_locator_trait()
+    function rivet_make($alias)
     {
-        $testClassWithLocatorTrait = new TestClassWithLocatorTrait;
-        $instance = $testClassWithLocatorTrait->make($this->testClassAlias);
-
-        $this->assertInstanceOf($this->testClassAlias, $instance);
+        return Ioc::instance()->make($alias);
     }
-
 }

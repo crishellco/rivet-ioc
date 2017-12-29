@@ -67,6 +67,9 @@ RivetIoc will use constructor type hints to automatically create and inject depe
 
 ````php
 $userService = \RivetIoc\Ioc::instance()->make('App\Services\UserService');
+
+// Or use the helper function...
+$userService = rivet_make('App\Services\UserService');
 ````
 
 ### Manual dependency registration
@@ -77,7 +80,7 @@ $userService = \RivetIoc\Ioc::instance()->make('App\Services\UserService');
 \RivetIoc\Ioc::instance()->register('App\Db', function() {
     $mysqli = new mysqli('localhost', 'username', 'password', 'mydb');
     $db = new App\Db($mysqli);
-    
+
     return $db;
 });
 ````
@@ -88,6 +91,9 @@ RivetIoc will use the registered closure to create and inject dependencies
 
 ````php
 $db = \RivetIoc\Ioc::instance()->make('App\Db');
+
+// Or use the helper function...
+$db = rivet_make('App\Db');
 ````
 
 **Forget a manually registered dependency**
@@ -111,12 +117,15 @@ namespace App\Services;
 class UserService
 {
     use \RivetIoc\Traits\Locator;
-    
+
     protected $dao;
-    
+
     public function __construct()
     {
         $this->dao = $this->make('App\Doa\UserDao');
+
+        // Or use the helper function...
+        $this->dao = rivet_make('App\Doa\UserDao');
     }
 }
 ````
